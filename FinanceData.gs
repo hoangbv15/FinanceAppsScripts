@@ -67,7 +67,7 @@ function getDataCustom(ticker, fieldName, shouldFetch, getFromNetworkFunc) {
 function getDataArray(ticker, currency, fieldNameKey, shouldFetch, getFromNetworkFunc) {
   if (ticker.map) {
     return ticker.map(function(t, i) {
-      return getData(t, currency[i], fieldNameKey, shouldFetch, getFromNetworkFunc); 
+      return getData(t, currency ? currency[i] : null, fieldNameKey, shouldFetch, getFromNetworkFunc); 
     });
   }
   else {
