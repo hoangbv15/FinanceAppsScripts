@@ -31,7 +31,7 @@ const EmptyValues = new Set(["-", "N/A"]);
 function getData(ticker, currency, fieldNameKey, shouldFetch, getFromNetworkFunc) {
   var fieldName = null;
   if (getFromNetworkFunc == null) {
-    switch (currency) {
+    switch (currency.toString()) { // If called via arrayformula, currency is not a string!
       case Currencies.USD:
         fieldName = FinvizFields[fieldNameKey];
         getFromNetworkFunc = getFinvizData;
@@ -61,24 +61,35 @@ function getData(ticker, currency, fieldNameKey, shouldFetch, getFromNetworkFunc
 }
 
 function getDataCustom(ticker, fieldName, shouldFetch, getFromNetworkFunc) {
-  return getData(ticker, null, fieldName, shouldFetch, function(fieldName, ticker) { return getFromNetworkFunc(ticker); });
+  return getDataArray(ticker, null, fieldName, shouldFetch, function(fieldName, ticker) { return getFromNetworkFunc(ticker); });
+}
+
+function getDataArray(ticker, currency, fieldNameKey, shouldFetch, getFromNetworkFunc) {
+  if (ticker.map) {
+    return ticker.map(function(t, i) {
+      return getData(t, currency[i], fieldNameKey, shouldFetch, getFromNetworkFunc); 
+    });
+  }
+  else {
+    return getData(ticker, currency, fieldNameKey, shouldFetch, getFromNetworkFunc);
+  }
 }
 
 // -----------------------------------------------------------------
 function getDividend(ticker, currency, shouldFetch) {
-  return getData(ticker, currency, "DIVIDEND", shouldFetch);
+  return getDataArray(ticker, currency, "DIVIDEND", shouldFetch);
 }
 
 function getBookValue(ticker, currency, shouldFetch) {
-  return getData(ticker, currency, "BOOK", shouldFetch);
+  return getDataArray(ticker, currency, "BOOK", shouldFetch);
 }
 
 function getPE(ticker, currency, shouldFetch) {
-  return getData(ticker, currency, "PE", shouldFetch);
+  return getDataArray(ticker, currency, "PE", shouldFetch);
 }
 
 function getPB(ticker, currency, shouldFetch) {
-  return getData(ticker, currency, "PB", shouldFetch);
+  return getDataArray(ticker, currency, "PB", shouldFetch);
 }
 
 function getLFCF(ticker, shouldFetch) {
