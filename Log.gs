@@ -8,7 +8,7 @@ const LogLevel = {
 const LogLevelPriority = {
   DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3, NONE: 4
 };
-var logLevel = LogLevel.DEBUG;
+var logLevel = LogLevel.NONE;
 
 function log(level, message) {
   if (LogLevelPriority[level] < LogLevelPriority[logLevel]) {

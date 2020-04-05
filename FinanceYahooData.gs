@@ -19,12 +19,12 @@ function getYahooUrl(ticker) {
 }
 
 function parseYahooHtml(html, fieldName) {
-  var tableRegex = new RegExp(`${fieldName}<\/span>.*?<td.*?>(-?[0-9]+\.?[0-9]*|N\/A)([kbm])?(?:<\/span>)?<\/td>`, "gi");
+  var tableRegex = new RegExp(`${fieldName}<\/span>.*?<td.*?>(-?[0-9]*\.?[0-9]+|N\/A)([kbm])?(?:<\/span>)?<\/td>`, "gi");
   var match = tableRegex.exec(html);
   if (match == null) {
     return `No ${fieldName} information found in html ${html.substring(0, 200)}`;
   }
-  logDebug(`Match information: ${match}`)
+  logDebug(`Match information: ${match}`);
   var result = match[1];
   if (result > 0 && match.length > 2) {
     return result * (YahooNumModifiers[match[2]] || 1)
