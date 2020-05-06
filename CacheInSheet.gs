@@ -26,15 +26,12 @@ const cacheInSheet = {
 
 function getRangeFromKey(key) {
   // Divide the key into 2 substrings
-  // Hash the first 1 chars into 26 buckets, to turn into an alphabet letter
-  // Hash the rest into 1000 buckets, to turn into an integer
+  // Hash each substring into 1000 buckets, to turn into an integer
   const firstStrLen = Math.floor(key.length / 2);
-//  const a = 'a'.charCodeAt(0);
   
   var firstKey = hash(key.substring(0, firstStrLen), 1000) + 1;
   var secondKey = hash(key.substring(firstStrLen), 1000) + 1;
   return [secondKey, firstKey]; // getRange takes (row, column)
-//  return String.fromCharCode(a + firstKey) + secondKey;
 }
 
 function hash(key, buckets) {
@@ -46,4 +43,41 @@ function hash(key, buckets) {
   }
   // Values will be from 0 to buckets - 1
   return ((hash + 2147483647) + 1) % buckets;
+}
+
+function checkForHashCollision() {
+  const sheetData = parseSheet();
+  const tickers = sheetData.tickers;
+  const currencies = sheetData.currencies;
+  
+  var ranges = {};
+  var collisions = [];
+  
+  // Get all possible keys that can store in the cache
+  for (var i = 0; i < tickers.length; i++) {
+    var ticker = tickers[i];
+    var currency = currencies[i];
+    // Construct and methods from FinanceData
+    for (var [_, field] of Object.entries(DataType)) {
+      var key = getCacheKey(field, ticker);
+      
+      // Get hash value
+      var range = getRangeFromKey(key);
+      range = `${range[0]}-${range[1]}`;
+      // Check if there is a collision
+      if (range in ranges) {
+        // Collision detected!
+        collisions.push(`${ranges[range]} and ${key} has a key collision at ${range}`);
+      }
+      else {
+        // No collision, store the key value
+        ranges[range] = key;
+      }
+    }
+  }
+  
+  if (collisions.length == 0) {
+    return "OK";
+  }
+  throw new Error(collisions.join("\n"));
 }

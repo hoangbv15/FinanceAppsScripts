@@ -39,13 +39,13 @@ function getYahooHtmlData(ticker) {
   return html;
 }
 
-function getYahooData(fieldName, ticker) {
+function getYahooData(fieldName, ticker, fieldNameKey) {
   var html = getYahooHtmlData(ticker);
   value = parseYahooHtml(html, fieldName);
   logDebug(`Fetched data: ${value}`);
-  cacheData(getCacheKey(fieldName, ticker), value);
+  cacheData(getCacheKey(fieldNameKey, ticker), value);
   // Pre cache all data that can be parsed from the same html
-  cacheAllData(YahooFields, ticker, html, parseYahooHtml, fieldName);
+  cacheAllData(YahooFields, ticker, html, parseYahooHtml, fieldNameKey);
 
   if (value == "N/A") {
     value = "";

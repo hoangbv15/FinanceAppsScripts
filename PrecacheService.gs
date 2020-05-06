@@ -1,9 +1,9 @@
 /// Takes tickers and currencies and precache all data periodically
 function runPrecache() {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Portfolio");
-  const tickers = removeEmptyValues(sheet.getRange("A4:A").getValues());
-  const currencies = removeEmptyValues(sheet.getRange("F4:F").getValues());
-    
+  const sheetData = parseSheet();
+  const tickers = sheetData.tickers;
+  const currencies = sheetData.currencies
+   
   for (var i = 0; i < tickers.length; i++) {
     var ticker = tickers[i], currency = currencies[i];
     // Cache each ticker
@@ -13,7 +13,7 @@ function runPrecache() {
       getLFCF(ticker, true);
     }
     catch (e) {
-      logError(`Exception while fetching ${ticker}: ${e}`);
+      logError(`Exception while fetching ${ticker}: ${e} ${e.stack}`);
     }
     Utilities.sleep(UrlFetcher.DelayMs);
   }

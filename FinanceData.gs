@@ -3,11 +3,11 @@ function getCacheKey(fieldName, ticker) {
 }
 
 function cacheAllData(fields, ticker, html, parser, excludedField) {
-  for (var [_, field] of Object.entries(fields)) {
-    if (field == excludedField) {
+  for (var [key, field] of Object.entries(fields)) {
+    if (key == excludedField) {
       continue;
     }
-    cacheData(getCacheKey(field, ticker), parser(html, field));
+    cacheData(getCacheKey(key, ticker), parser(html, field));
   }
 }
 
@@ -31,16 +31,16 @@ const EmptyValues = new Set(["-", "N/A"]);
 function getData(ticker, currency, fieldNameKey, shouldFetch, getFromNetworkFunc) {
   var fieldName = null;
   if (getFromNetworkFunc == null) {
-    switch (currency.toString()) { // If called via arrayformula, currency is not a string!
-      case Currencies.USD:
-        fieldName = FinvizFields[fieldNameKey];
-        getFromNetworkFunc = getFinvizData;
-        break;
-      case Currencies.GBP:
-        fieldName = YahooFields[fieldNameKey];
-        getFromNetworkFunc = getYahooData;
-        break;
-    }
+     switch (currency.toString()) { // If called via arrayformula, currency is not a string!
+       case Currencies.USD:
+         fieldName = FinvizFields[fieldNameKey];
+         getFromNetworkFunc = getFinvizData;
+         break;
+       case Currencies.GBP:
+         fieldName = YahooFields[fieldNameKey];
+         getFromNetworkFunc = getYahooData;
+         break;
+     }
   }
   fieldName = fieldName == null ? fieldNameKey : fieldName;
   
@@ -48,11 +48,11 @@ function getData(ticker, currency, fieldNameKey, shouldFetch, getFromNetworkFunc
   var value = null;
   if (shouldFetch) {
     // Fetch from network
-    value = getFromNetworkFunc(fieldName, ticker);
+    value = getFromNetworkFunc(fieldName, ticker, fieldNameKey);
   }
   else {
     // Get from cache
-    value = getTickerFromCache(fieldName, ticker);
+    value = getTickerFromCache(fieldNameKey, ticker);
   }
   if (EmptyValues.has(value)) {
     value = "";
@@ -76,27 +76,41 @@ function getDataArray(ticker, currency, fieldNameKey, shouldFetch, getFromNetwor
 }
 
 // -----------------------------------------------------------------
+const DataType = {
+  DIVIDEND: "DIVIDEND",
+  BOOK: "BOOK",
+  PE: "PE",
+  PB: "PB",
+  LFCF: "LFCF",
+  TOTALDEBT: "TOTALDEBT"
+};
+
 function getDividend(ticker, currency, shouldFetch) {
-  return getDataArray(ticker, currency, "DIVIDEND", shouldFetch);
+  return getDataArray(ticker, currency, DataType.DIVIDEND, shouldFetch);
 }
 
 function getBookValue(ticker, currency, shouldFetch) {
-  return getDataArray(ticker, currency, "BOOK", shouldFetch);
+  return getDataArray(ticker, currency, DataType.BOOK, shouldFetch);
 }
 
 function getPE(ticker, currency, shouldFetch) {
-  return getDataArray(ticker, currency, "PE", shouldFetch);
+  return getDataArray(ticker, currency, DataType.PE, shouldFetch);
 }
 
 function getPB(ticker, currency, shouldFetch) {
-  return getDataArray(ticker, currency, "PB", shouldFetch);
+  return getDataArray(ticker, currency, DataType.PB, shouldFetch);
 }
 
 function getLFCF(ticker, shouldFetch) {
-  return getDataCustom(ticker, YahooFields.LFCF, shouldFetch, function(ticker) { return getYahooData(YahooFields.LFCF, ticker); });
+  return getDataCustom(ticker, DataType.LFCF, shouldFetch, function(ticker) { return getYahooData(YahooFields.LFCF, ticker, DataType.LFCF); });
 }
 
 function getTotalDebt(ticker, shouldFetch) {
-  return getDataCustom(ticker, YahooFields.TOTALDEBT, shouldFetch, function(ticker) { return getYahooData(YahooFields.TOTALDEBT, ticker); });
+  return getDataCustom(ticker, DataType.TOTALDEBT, shouldFetch, function(ticker) { return getYahooData(YahooFields.TOTALDEBT, ticker, DataType.TOTALDEBT); });
 }
 // -----------------------------------------------------------------
+
+function cacheCustomData() {
+  cacheData("OGZD.IL-DIVIDEND", 0.5);
+  cacheData("IUKD.L-DIVIDEND", 0.4697);
+}
