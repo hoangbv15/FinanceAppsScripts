@@ -7,7 +7,11 @@ function cacheAllData(fields, ticker, html, parser, excludedField) {
     if (key == excludedField) {
       continue;
     }
-    cacheData(getCacheKey(key, ticker), parser(html, field));
+    try {
+      cacheData(getCacheKey(key, ticker), parser(html, field));
+    } catch (e) {
+      logWarn(e);
+    }
   }
 }
 

@@ -37,9 +37,13 @@ function getFinvizHtmlData(ticker) {
 
 function getFinvizData(fieldName, ticker, fieldNameKey) {
   var html = getFinvizHtmlData(ticker);
-  value = parseFinvizHtml(html, fieldName);
-  logDebug(`Fetched data: ${value}`);
-  cacheData(getCacheKey(fieldNameKey, ticker), value);
+  try {
+    value = parseFinvizHtml(html, fieldName);
+    logDebug(`Fetched data: ${value}`);
+    cacheData(getCacheKey(fieldNameKey, ticker), value);
+  } catch (e) {
+    logWarn(e);
+  }
   // Pre cache all data that can be parsed from the same html
   cacheAllData(FinvizFields, ticker, html, parseFinvizHtml, fieldNameKey);
   

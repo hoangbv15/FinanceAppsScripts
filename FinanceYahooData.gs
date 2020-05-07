@@ -41,9 +41,13 @@ function getYahooHtmlData(ticker) {
 
 function getYahooData(fieldName, ticker, fieldNameKey) {
   var html = getYahooHtmlData(ticker);
-  value = parseYahooHtml(html, fieldName);
-  logDebug(`Fetched data: ${value}`);
-  cacheData(getCacheKey(fieldNameKey, ticker), value);
+  try {
+    value = parseYahooHtml(html, fieldName);
+    logDebug(`Fetched data: ${value}`);
+    cacheData(getCacheKey(fieldNameKey, ticker), value);
+  } catch (e) {
+    logWarn(e);
+  }
   // Pre cache all data that can be parsed from the same html
   cacheAllData(YahooFields, ticker, html, parseYahooHtml, fieldNameKey);
 
