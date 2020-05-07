@@ -22,7 +22,7 @@ function parseYahooHtml(html, fieldName) {
   var tableRegex = new RegExp(`${fieldName}<\/span>.*?<td.*?>(-?[0-9]*\.?[0-9]+|N\/A)([kbm])?(?:<\/span>)?<\/td>`, "gi");
   var match = tableRegex.exec(html);
   if (match == null) {
-    return `No ${fieldName} information found in html ${html.substring(0, 200)}`;
+    throw new Error(`No ${fieldName} information found in html ${html.substring(0, 200)}`);
   }
   logDebug(`Match information: ${match}`);
   var result = match[1];
