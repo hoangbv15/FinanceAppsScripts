@@ -72,6 +72,7 @@ function checkForHashCollision() {
       else {
         // No collision, store the key value
         ranges[range] = key;
+        logDebug(`No collision for key ${key}`);
       }
     }
   }

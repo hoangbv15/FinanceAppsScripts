@@ -18,10 +18,3 @@ function runPrecache() {
     Utilities.sleep(UrlFetcher.DelayMs);
   }
 }
-
-const removeEmptyValues = function(items) {
-  return items.reduce(function(ar, e) {
-    if (e[0]) ar.push(e[0]);
-    return ar;
-  }, []);
-}
