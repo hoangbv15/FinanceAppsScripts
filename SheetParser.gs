@@ -1,8 +1,8 @@
 function parseSheet() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Portfolio");
-  const metaRow = sheet.getRange("W1").getValue();
-  const tickerRange = sheet.getRange(`Z${metaRow}`).getValue();
-  const currencyRange = sheet.getRange(`AA${metaRow}`).getValue();
+  const metaRow = sheet.getRange("X1").getValue();
+  const tickerRange = sheet.getRange(`AA${metaRow}`).getValue();
+  const currencyRange = sheet.getRange(`AB${metaRow}`).getValue();
   var tickers = sheet.getRange(tickerRange).getValues();
   var currencies = sheet.getRange(currencyRange).getValues();
   

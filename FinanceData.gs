@@ -117,4 +117,5 @@ function getTotalDebt(ticker, shouldFetch) {
 function cacheCustomData() {
   cacheData("OGZD.IL-DIVIDEND", 0.5);
   cacheData("IUKD.L-DIVIDEND", 0.4697);
+  cacheData("IDVY.L-DIVIDEND", 0.98);
 }
