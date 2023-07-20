@@ -29,8 +29,11 @@ function getRangeFromKey(key) {
   // Hash each substring into 1000 buckets, to turn into an integer
   const firstStrLen = Math.floor(key.length / 2);
   
-  var firstKey = hash(key.substring(0, firstStrLen), 1000) + 1;
-  var secondKey = hash(key.substring(firstStrLen), 1000) + 1;
+  // Google sheets can have maximum 10,000 columns, but only 5,000,000 cells
+  // If we divide the sheet 2236 columns and 2236 rows, we get roughly 5 million buckets
+  const sizeLimit = 2236; 
+  var firstKey = hash(key.substring(0, firstStrLen), sizeLimit) + 1;
+  var secondKey = hash(key.substring(firstStrLen), sizeLimit) + 1;
   return [secondKey, firstKey]; // getRange takes (row, column)
 }
 
